@@ -2099,11 +2099,17 @@ func outputVarsForExprCall(expr *Expr, builtins map[string]*Builtin, arity func(
 func outputVarsForExprRefs(expr *Expr, safe VarSet) VarSet {
 	output := VarSet{}
 	WalkRefs(expr, func(r Ref) bool {
-		if safe.Contains(r[0].Value.(Var)) {
+		switch head := r[0].Value.(type) {
+		case Var:
+			if safe.Contains(head) {
+				output.Update(r.OutputVars())
+				return false
+			}
+		case Array, Object, Set, Call:
 			output.Update(r.OutputVars())
 			return false
 		}
-		return true
+		return false
 	})
 	return output
 }
