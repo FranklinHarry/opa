@@ -53,7 +53,17 @@ func (u *unifier) unify(a *Term, b *Term) {
 		}
 
 	case Ref:
-		if u.isSafe(a[0].Value.(Var)) {
+		switch head := a[0].Value.(type) {
+		case Var:
+			if u.isSafe(head) {
+				switch b := b.Value.(type) {
+				case Var:
+					u.markSafe(b)
+				case Array, Object:
+					u.markAllSafe(b)
+				}
+			}
+		default:
 			switch b := b.Value.(type) {
 			case Var:
 				u.markSafe(b)
