@@ -523,6 +523,10 @@ func makeRef(loc *Location, head, rest interface{}) (interface{}, error) {
 	headTerm := head.(*Term)
 	ifaceSlice := rest.([]interface{})
 
+	if len(ifaceSlice) == 0 {
+		return headTerm, nil
+	}
+
 	ref := make(Ref, len(ifaceSlice)+1)
 	ref[0] = headTerm
 
